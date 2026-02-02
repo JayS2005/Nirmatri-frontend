@@ -24,7 +24,7 @@ export default function LoginPage() {
 
  
     setTimeout(() => {
-      router.push("/shop");
+      router.push("/home");
     }, 2000);
   };
 
@@ -141,7 +141,7 @@ export default function LoginPage() {
 
         <p className="mt-10 text-sm text-gray-700 text-center">
           Don’t have an account?{" "}
-          <Link href="/signup" className="text-blue-600 hover:underline">
+          <Link href="/userauth/signup" className="text-blue-600 hover:underline">
             Register
           </Link>
         </p>
