@@ -80,7 +80,7 @@ export default function SellerLayout({
         {/* Logout Section with clean divider */}
         <div className="p-4 mt-auto border-t border-white/[0.05]">
           <Link
-            href="/sellerauth/logout"
+            href="http://localhost:3000/"
             className="flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 px-4 py-3 rounded-xl transition-all duration-200"
           >
             <span>🚪</span>
@@ -121,7 +121,7 @@ export default function SellerLayout({
                <MobileNavItem href="/seller/dashboard/earnings" label="Earnings" icon="💰" pathname={pathname} onClick={() => setIsMobileMenuOpen(false)} />
                <MobileNavItem href="/seller/dashboard/profile" label="Profile" icon="👤" pathname={pathname} onClick={() => setIsMobileMenuOpen(false)} />
                <MobileNavItem href="/seller/dashboard/settings" label="Settings" icon="⚙️" pathname={pathname} onClick={() => setIsMobileMenuOpen(false)} />
-               <Link href="/sellerauth/logout" className="flex items-center gap-3 px-4 py-4 text-red-500 font-semibold">
+               <Link href="/sellerauth/" className="flex items-center gap-3 px-4 py-4 text-red-500 font-semibold">
                  <span>🚪</span><span>Logout</span>
                </Link>
             </div>

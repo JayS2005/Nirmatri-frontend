@@ -795,11 +795,11 @@ function Review({ formData }: any) {
           <div className="flex-1">
             <p className="text-sm text-gray-900 dark:text-white">
               I agree to the{" "}
-              <a href="/terms" className="text-blue-600 dark:text-blue-400 hover:underline">
+              <a href="/seller/onboarding/terms&conditions/" className="text-blue-600 dark:text-blue-400 hover:underline">
                 Terms and Conditions
               </a>
               {" "}and{" "}
-              <a href="/privacy" className="text-blue-600 dark:text-blue-400 hover:underline">
+              <a href="/seller/onboarding/privacy_policy" className="text-blue-600 dark:text-blue-400 hover:underline">
                 Privacy Policy
               </a>
             </p>
