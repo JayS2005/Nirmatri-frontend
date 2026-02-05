@@ -196,7 +196,7 @@ export default function SellerRegisterPage() {
             <p className="mt-6 text-sm text-gray-600 text-center">
               Already have an account?{" "}
               <Link
-                href="/sellerauth/login"
+                href="/seller/login"
                 className="text-blue-600 font-medium hover:underline"
               >
                 Login
