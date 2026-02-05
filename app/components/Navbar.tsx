@@ -44,19 +44,35 @@ export function Navbar({ onUserClick }: Props) {
   }, [mobileSearchOpen]);
 
   return (
-    <header className="sticky top-0 z-[100] bg-white dark:bg-gray-900 border-b shadow-sm">
-      {/* 🔹 TOP PROMO BAR (optional, collapses safely) */}
+    <header
+      className="
+        sticky top-0 z-[100]
+        backdrop-blur-xl
+        bg-gradient-to-r
+        from-[#CF9893]/40
+        via-[#F6EAEA]
+        to-[#6968A6]/40
+        dark:bg-gray-900
+        border-b border-[#6968A6]/30
+        shadow-[0_12px_30px_-10px_rgba(105,104,166,0.45)]
+        relative
+      "
+    >
+      {/* subtle bottom glow line */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#CF9893] via-[#6968A6] to-[#085078]" />
+
+      {/* 🔹 TOP PROMO BAR */}
       <div
         className={`overflow-hidden transition-all duration-500 ${
           showTopBar ? "max-h-10" : "max-h-0"
         }`}
       >
-        <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white text-center text-xs py-2">
+        <div className="bg-gradient-to-r from-[#CF9893] via-[#6968A6] to-[#085078] text-white text-center text-xs py-2 tracking-wide">
           Where tradition is handcrafted into elegance
         </div>
       </div>
 
-      {/* 🔹 MAIN NAVBAR (HEIGHT FIXED = h-14) */}
+      {/* 🔹 MAIN NAVBAR */}
       <div className="h-14">
         <div className="max-w-7xl mx-auto h-full px-4 flex items-center gap-3">
           {/* LOGO */}
@@ -75,13 +91,22 @@ export function Navbar({ onUserClick }: Props) {
                 name="q"
                 type="search"
                 placeholder="Search handcrafted products..."
-                className="w-full h-10 pl-5 pr-12 rounded-full"
+                className="
+                  w-full h-10 pl-5 pr-12 rounded-full
+                  bg-white
+                  border border-[#6968A6]/30
+                  focus:ring-2 focus:ring-[#6968A6]/40
+                "
               />
               <Button
                 size="icon"
                 type="submit"
-                className="absolute right-1 top-1/2 -translate-y-1/2
-                           h-8 w-8 rounded-full bg-blue-900"
+                className="
+                  absolute right-1 top-1/2 -translate-y-1/2
+                  h-8 w-8 rounded-full
+                  bg-gradient-to-br from-[#6968A6] to-[#085078]
+                  shadow-md
+                "
               >
                 <Search className="h-4 w-4 text-white" />
               </Button>
@@ -90,7 +115,6 @@ export function Navbar({ onUserClick }: Props) {
 
           {/* RIGHT ACTIONS */}
           <div className="flex items-center gap-2 ml-auto">
-            {/* MOBILE SEARCH */}
             <Button
               variant="ghost"
               size="icon"
@@ -102,12 +126,17 @@ export function Navbar({ onUserClick }: Props) {
 
             <ThemeToggle />
 
-            {/* USER ICON */}
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full border"
               onClick={onUserClick}
+              className="
+                rounded-full border border-[#6968A6]/40
+                hover:bg-gradient-to-br
+                hover:from-[#CF9893]/50
+                hover:to-[#6968A6]/50
+                transition-all
+              "
             >
               <User className="h-5 w-5" />
             </Button>
@@ -115,7 +144,7 @@ export function Navbar({ onUserClick }: Props) {
         </div>
       </div>
 
-      {/* 🔹 MOBILE SEARCH BAR */}
+      {/* 🔹 MOBILE SEARCH */}
       <div
         ref={searchRef}
         className={`md:hidden overflow-hidden transition-all duration-300 ${
@@ -128,10 +157,14 @@ export function Navbar({ onUserClick }: Props) {
             name="q"
             type="search"
             placeholder="Search products..."
-            className="flex-1 h-11 rounded-full"
+            className="flex-1 h-11 rounded-full border border-[#6968A6]/30"
           />
-          <Button size="icon" type="submit">
-            <Search className="h-4 w-4" />
+          <Button
+            size="icon"
+            type="submit"
+            className="bg-gradient-to-br from-[#6968A6] to-[#085078]"
+          >
+            <Search className="h-4 w-4 text-white" />
           </Button>
         </form>
       </div>

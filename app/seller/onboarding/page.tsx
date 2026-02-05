@@ -63,8 +63,7 @@ export default function SellerOnboardingPage() {
 
               {index !== steps.length - 1 && (
                 <div className="flex-1 h-[2px] mx-4 bg-gray-200">
-                  <div
-                    className="h-full bg-blue-600 transition-all"
+                  <div className="h-full bg-blue-600 transition-all"
                     style={{
                       width: index < currentStep ? "100%" : "0%",
                     }}
