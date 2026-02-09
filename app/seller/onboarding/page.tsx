@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from '@/app/contexts/ThemeContext';
 import { useRouter } from "next/navigation";
 import { Input } from "@/app/components/ui/input";
 
@@ -16,8 +15,7 @@ export default function SellerOnboardingPage() {
   // STATE MANAGEMENT
   // ============================================
   const [currentStep, setCurrentStep] = useState(0);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const { effectiveTheme } = useTheme(); // Get current theme (light/dark)
+  const [showSuccess, setShowSuccess] = useState(false); // Get current theme (light/dark)
   const router = useRouter();
 
   // Form data state for all steps
@@ -296,7 +294,7 @@ function StoreInfo({ formData, updateFormData }: FormDataProps) {
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Owner Name
         </label>
-        <input
+        <Input
           value={formData.ownerName}
           onChange={(e) => updateFormData("ownerName", e.target.value)}
           placeholder="Type your full name"

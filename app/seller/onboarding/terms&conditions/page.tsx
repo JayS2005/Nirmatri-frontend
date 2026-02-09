@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useTheme } from '@/app/contexts/ThemeContext';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
@@ -9,7 +8,6 @@ export default function SellerTermsPage() {
   // ============================================
   // STATE & HOOKS
   // ============================================
-  const { effectiveTheme } = useTheme();
   const router = useRouter();
   const [agreed, setAgreed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
