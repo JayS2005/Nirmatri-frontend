@@ -15,6 +15,7 @@ import { PaymentsSection } from "@/app/components/userprofile/sections/PaymentsS
 import { ReturnsSection } from "@/app/components/userprofile/sections/ReturnsSection";
 import { NotificationsSection } from "@/app/components/userprofile/sections/NotificationsSection";
 import { SupportSection } from "@/app/components/userprofile/sections/SupportSection";
+// import SettingsSection  from "@/app/components/userprofile/sections/SettingsSection";
 
 type Section =
   | "profile"
@@ -25,6 +26,7 @@ type Section =
   | "payments"
   | "returns"
   | "notifications"
+  | "settings"
   | "support";
 
 export default function HeaderWrapper() {
@@ -53,7 +55,7 @@ export default function HeaderWrapper() {
       case "returns": return <ReturnsSection />;
       case "notifications": return <NotificationsSection />;
       case "support": return <SupportSection />;
-      default: return <MyProfileSection />;
+      // default: return <MyProfileSection />;
     }
   };
 
