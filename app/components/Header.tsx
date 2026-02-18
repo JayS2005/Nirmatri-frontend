@@ -1,15 +1,8 @@
 "use client";
 
-import { Search, LogIn, Menu } from "lucide-react";
-import { ShoppingCart } from "lucide-react";
-
+import { Search, LogIn, Menu, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import {
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 import { Button } from "@/app/components/ui/button";
@@ -17,9 +10,17 @@ import { Input } from "@/app/components/ui/input";
 import { Sheet, SheetContent } from "@/app/components/ui/sheet";
 import NirmatriLogo from "@/app/components/Nirmatri";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/app/components/ui/dropdown-menu";
+
 type HeaderProps = {
   onUserClick?: () => void;
 };
+
 
 export function Header({ onUserClick }: HeaderProps) {
   const [showTopBar, setShowTopBar] = useState(true);
@@ -69,10 +70,28 @@ export function Header({ onUserClick }: HeaderProps) {
       document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileSearchOpen]);
 
+
+  /* ❌ LOGIN / AUTH PAGES PE HEADER HIDE */
+if (
+  pathname.startsWith("/userauth") ||
+  pathname.startsWith("/seller") ||
+  pathname.startsWith("/superadmin")
+) {
+  return null;
+}
+
+
+  const logout = () => {
+    localStorage.removeItem("loggedIn");
+    setIsLoggedIn(false);
+    router.replace("/");
+  };
+
   /* ❌ AFTER ALL HOOKS → SAFE RETURN */
   if (hideHeader) {
     return null;
   }
+
 
   return (
     <>
@@ -109,9 +128,9 @@ export function Header({ onUserClick }: HeaderProps) {
         <div className="h-14">
           <div className="max-w-7xl mx-auto h-full px-4 flex items-center gap-3">
             {/* LOGO */}
-            <Link href="/" className="flex-shrink-0">
+          
               <NirmatriLogo />
-            </Link>
+           
 
             {/* 🔎 SEARCH (only on home) */}
             {isHomePage && (
@@ -176,9 +195,6 @@ export function Header({ onUserClick }: HeaderProps) {
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => router.push("/seller/login")}>
                       Login as Seller
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push("/userauth/login")}>
-                      Super Admin 
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

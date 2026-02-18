@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 
-export default function LoginPage() {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -36,7 +36,7 @@ export default function LoginPage() {
     setLoading(true);
 
     localStorage.setItem("loggedIn", "true");
-    router.replace("/home");
+    router.push("/");
 
 
   };
@@ -81,8 +81,8 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@email.com"
             className="w-full rounded-xl border border-gray-300/60
-                       bg-white/60 px-4 py-4 text-sm
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      bg-white/60 px-4 py-4 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -99,8 +99,8 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               className="w-full rounded-xl border border-gray-300/60
-                         bg-white/60 px-4 py-4 pr-12 text-sm
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        bg-white/60 px-4 py-4 pr-12 text-sm
+                        focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             {/* 👁 Eye Toggle */}
@@ -108,7 +108,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-4 top-1/2 -translate-y-1/2
-                         text-gray-500 hover:text-gray-800 transition"
+                        text-gray-500 hover:text-gray-800 transition"
             >
               {showPassword ? (
                 <EyeOff className="h-5 w-5" />
@@ -157,13 +157,13 @@ export default function LoginPage() {
                      bg-white/70 py-4 text-sm font-medium
                      text-gray-700 hover:bg-white transition"
         >
-          <img src="/google.jpg" className="h-5 w-5" alt="Google" />
+          <img src="/google.jpg" className="h-5 w-5" alt="Google"/>
           Continue with Google
         </button>
 
         {/* ================= REGISTER ================= */}
         <p className="mt-10 text-sm text-gray-700 text-center">
-          Don’t have an account?{" "}
+          Do not have an account?{" "}
           <Link
             href="/userauth/signup"
             className="text-blue-600 hover:underline"
