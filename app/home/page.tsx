@@ -28,7 +28,7 @@ export default function Page() {
 
 
   return (
-    <ThemeProvider>
+    
       <div className="min-h-screen bg-black transition-colors duration-300">
         <VideoLikeCarousel />
         <CategoryShowcase />
@@ -36,7 +36,7 @@ export default function Page() {
         <ArtisanSpotlight />
         <WhyShopWithUs />
         <NirmatriFooter />
-      </div>
-    </ThemeProvider>
+      </div> 
+
   );
 }
