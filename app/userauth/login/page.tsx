@@ -1,9 +1,9 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2, Eye, EyeOff } from "lucide-react";
+import NirmatriLogo from "@/app/components/Nirmatri";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -36,7 +36,7 @@ export default function Login() {
     setLoading(true);
 
     localStorage.setItem("loggedIn", "true");
-    router.push("/");
+    router.push("/home");
 
 
   };
@@ -54,15 +54,9 @@ export default function Login() {
         {/* ================= HEADER ================= */}
         <div className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-3">
-            <div
-              className="h-11 w-11 rounded-full bg-blue-600 text-white
-                         flex items-center justify-center font-semibold"
-            >
-              N
-            </div>
-            <span className="text-base font-semibold text-gray-800">
-              Nirmatri
-            </span>
+           <div className="relative w-100 h-20 flex items-center justify-center">
+             <NirmatriLogo />
+           </div>
           </div>
         </div>
 

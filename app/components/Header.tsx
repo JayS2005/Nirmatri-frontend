@@ -26,6 +26,8 @@ export function Header({ onUserClick }: HeaderProps) {
   const [showTopBar, setShowTopBar] = useState(true);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [sheetSearchOpen, setSheetSearchOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
   const [, startTransition] = useTransition();
 
@@ -132,38 +134,22 @@ if (
               <NirmatriLogo />
            
 
-            {/* 🔎 SEARCH (only on home) */}
-            {isHomePage && (
-              <div className="hidden md:flex flex-1 justify-center">
-                <form action="/search" className="relative w-full max-w-xl">
-                  <Input
-                    name="q"
-                    type="search"
-                    placeholder="Search handcrafted products..."
-                    className="h-9 pl-4 pr-11 rounded-full bg-white"
-                  />
-                  <Button
-                    size="icon"
-                    type="submit"
-                    className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full"
-                  >
-                    <Search className="h-6 w-6 text-blue-500" />
-                  </Button>
-                </form>
-              </div>
-            )}
-
-            {/* 🔹 RIGHT SIDE */}
-            <div className="flex items-center gap-2 ml-auto">
-              {!isHomePage ? (
-                /* LANDING HEADER */
+                        {/* DESKTOP SEARCH */}
+            <div className="hidden md:flex flex-1 justify-center">
+              <form action="/search" className="relative w-full max-w-xl">
+                <Input
+                  name="q"
+                  type="search"
+                  placeholder="Search handcrafted products..."
+                  className="h-9 pl-4 pr-11 rounded-full bg-white"
+                />
                 <Button
-                  variant="outline"
-                  className="h-8 px-3"
-                  onClick={() => router.push("/userauth/login")}
+                  size="icon"
+                  type="submit"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full"
                 >
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Login
+              <Search className="h-6 w-6 text-green-500" />
+
                 </Button>
               </form>
             </div>
@@ -225,4 +211,4 @@ if (
       </header>
     </>
   );
-}
+}  
