@@ -3,8 +3,13 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import  TermsModal  from "@/app/components/TermsModal";
 import { Input } from "@/app/components/ui/input";
+import{
+  Clipboard,Check,
+  Smartphone,
+  AlertTriangle, NotebookText,
+  FileUp
+} from "lucide-react";
 
 // ============================================
 // CONFIGURATION
@@ -58,19 +63,36 @@ export default function SellerOnboardingPage() {
   // ============================================
   // NAVIGATION HANDLERS
   // ============================================
-  const nextStep = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-    } else {
-      // ✅ Stepper complete
-      setShowSuccess(true);
+  const nextStep = async () => {
+  if (currentStep < steps.length - 1) {
+    setCurrentStep((prev) => prev + 1);
+  } else {
+    // ✅ FINAL STEP: SUBMIT FOR APPROVAL
+    setShowSuccess(true);
 
-      // ⏳ success message ke baad dashboard
+    try {
+      // 🔐 Call backend to mark onboarding complete
+      await fetch("/api/seller/onboarding/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          onboardingCompleted: true,
+          status: "PENDING_APPROVAL",
+        }),
+      });
+
+      // ⏳ show success screen briefly
       setTimeout(() => {
-        router.push("/seller/dashboard");
+        router.push("/seller/pending-approval");
       }, 2000);
+
+    } catch (error) {
+      console.error("Submission failed", error);
     }
-  };
+  }
+};
 
   const prevStep = () => {
     if (currentStep > 0) {
@@ -172,7 +194,7 @@ export default function SellerOnboardingPage() {
             className="py-12 text-center"
           >
             <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-4xl">✅</span>
+              <Check className="w-10 h-10 text-green-600" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Welcome to Nirmatri!
@@ -181,8 +203,12 @@ export default function SellerOnboardingPage() {
               Successfully created your seller account
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-              Redirecting you to your dashboard…
-            </p>
+  Your details have been submitted for approval.
+</p>
+
+<p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+  Redirecting you to approval status…
+</p>
             <div className="mt-4">
               <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
             </div>
@@ -306,7 +332,7 @@ function StoreInfo({ formData, updateFormData }: FormDataProps) {
         </p>
       </div>
       {/* Store Name */}
-      <div>
+      {/* <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Store Name
         </label>
@@ -319,7 +345,7 @@ function StoreInfo({ formData, updateFormData }: FormDataProps) {
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Choose a unique name for your store
         </p>
-      </div>
+      </div> */}
 
       {/* Store Categories - Multi-select */}
       <div>
@@ -475,7 +501,7 @@ function KYC({ formData, updateFormData }: FormDataProps) {
       {/* Info Box */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <p className="text-sm text-blue-900 dark:text-blue-400">
-          <strong>📌 Note:</strong> All documents information must be clear.
+          <strong><NotebookText className="inline mr-2" size={16} /> Note:</strong> All documents information must be clear.
         </p>
       </div>
     </div>
@@ -572,7 +598,7 @@ function Bank({ formData, updateFormData }: FormDataProps) {
       {/* Warning Box */}
       <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
         <p className="text-sm text-yellow-900 dark:text-yellow-400">
-          <strong>⚠️ Important:</strong> Ensure bank details are accurate. All payments will be transferred to this account.
+          <strong><AlertTriangle className="inline mr-2" size={16} /> Important:</strong> Ensure bank details are accurate. All payments will be transferred to this account.
         </p>
       </div>
       
@@ -700,7 +726,7 @@ function PhoneVerification({ formData, updateFormData }: FormDataProps) {
           className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4"
         >
           <div className="flex items-center gap-3">
-            <span className="text-2xl">✅</span>
+         <Check className="w-10 h-10 text-green-600" />
             <div>
               <p className="text-sm font-semibold text-green-900 dark:text-green-400">
                 Phone number verified successfully!
@@ -716,7 +742,7 @@ function PhoneVerification({ formData, updateFormData }: FormDataProps) {
       {/* Info Box */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <p className="text-sm text-blue-900 dark:text-blue-400">
-          <strong>📱 Why verify?</strong> We need to confirm your identity and send order updates via SMS.
+          <strong><Smartphone className="inline mr-2" size={16} /> Why verify?</strong> We need to confirm your identity and send order updates via SMS.
         </p>
       </div>
     </div>
@@ -728,14 +754,14 @@ function PhoneVerification({ formData, updateFormData }: FormDataProps) {
 
 
 function Review({ formData }: any) {
-  const [showTerms, setShowTerms] = useState(false);
+  
   
   const sections = [
     {
       title: "Phone Verification",
       items: [
         { label: "Mobile Number", value: formData.phoneNumber ? `+91 ${formData.phoneNumber}` : "Not provided" },
-        { label: "Verification Status", value: formData.isOtpVerified ? "✅ Verified" : "❌ Not verified" },
+        { label: "Verification Status", value: formData.isOtpVerified ? " Verified" : " Not verified" },
       ],
     },
     {
@@ -756,8 +782,8 @@ function Review({ formData }: any) {
       items: [
         { label: "PAN Number", value: formData.panNumber || "Not provided" },
         { label: "Aadhaar Number", value: formData.aadhaarNumber ? formData.aadhaarNumber.replace(/\d(?=\d{4})/g, "X") : "Not provided" },
-        { label: "PAN Document", value: formData.panDocument ? "✅ Uploaded" : "❌ Not uploaded" },
-        { label: "Aadhaar Document", value: formData.aadhaarDocument ? "✅ Uploaded" : "❌ Not uploaded" },
+        { label: "PAN Document", value: formData.panDocument ? " Uploaded" : " Not uploaded" },
+        { label: "Aadhaar Document", value: formData.aadhaarDocument ? " Uploaded" : "Not uploaded" },
       ],
     },
     {
@@ -782,11 +808,7 @@ function Review({ formData }: any) {
           Please review all details before submitting
         </p>
       </div>
-       <TermsModal
-  open={showTerms}
-  onClose={() => setShowTerms(false)}
-  termsContent={termsContent}
-/>
+       
 
       {/* Review Sections */}
       <div className="space-y-4">
@@ -814,42 +836,11 @@ function Review({ formData }: any) {
         ))}
       </div>
       
-
-
-      {/* Terms and Conditions */}
-      <div className="bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded-lg p-5">
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            className="mt-1 w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-          />
-          <div className="flex-1">
-            <p className="text-sm text-gray-900 dark:text-white">
-              I agree to the{" "}
-              <button
-  type="button"
-  onClick={() => setShowTerms(true)}
-  className="text-blue-600 dark:text-blue-400 hover:underline"
->
-
-                Terms and Conditions
-              </button>
-              {" "}and{" "}
-              <a href="/seller/onboarding/privacy_policy" className="text-blue-600 dark:text-blue-400 hover:underline">
-                Privacy Policy
-              </a>
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              By checking this box, you confirm that all information provided is accurate
-            </p>
-          </div>
-        </label>
-      </div>
-
       {/* Info Box */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-5">
         <p className="text-sm text-blue-900 dark:text-blue-400 font-semibold mb-2">
-          📋 What happens next?
+          <Clipboard className="inline mr-2" size={16} />
+          What happens next?
         </p>
         <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1 list-disc list-inside">
           <li>Your application will be reviewed within 24-48 hours</li>
@@ -968,7 +959,7 @@ function FileUpload({ label, file, onChange, description }: FileUploadProps) {
           ) : (
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                📁 Click to upload or drag and drop
+                <FileUp className="inline mr-2" size={16} /> Click to upload or drag and drop
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                 {description}

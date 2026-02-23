@@ -1,171 +1,380 @@
-"use client";
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Loader2, Eye, EyeOff } from "lucide-react";
-import NirmatriLogo from "@/app/components/Nirmatri";
+'use client';
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from 'react'; // Added Suspense
+import {
+  Package,
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  Search,
+  Grid,
+  List,
+  Eye,
+  Pencil,
+  Trash2,
+  Image as ImageIcon,
+  Plus
+} from "lucide-react";
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+// Mock product data (Exactly as provided)
+const mockProducts = [
+  { id: 1, name: 'Handmade Terracotta Vase', category: 'Home Decor', price: 1200, stock: 45, status: 'active', image : '/products/terracotta-vase.png', sales: 342, rating: 4.8 },
+  { id: 2, name: 'Hand-painted Ceramic Plates', category: 'Kitchenware', price: 1800, stock: 28, status: 'active', image : '/products/terracotta-vase.png', sales: 289, rating: 4.9 },
+  { id: 3, name: 'Wooden Wall Art', category: 'Home Decor', price: 980, stock: 15, status: 'active', image : '/products/terracotta-vase.png', sales: 267, rating: 4.7 },
+  { id: 4, name: 'Handwoven Jute Basket', category: 'Storage', price: 675, stock: 0, status: 'out_of_stock', image : '/products/terracotta-vase.png', sales: 198, rating: 4.6 },
+  { id: 5, name: 'Ceramic Dinner Set', category: 'Kitchenware', price: 3200, stock: 12, status: 'active', image : '/products/terracotta-vase.png', sales: 156, rating: 4.9 },
+  { id: 6, name: 'Handcrafted Clay Pot Set', category: 'Kitchenware', price: 2450, stock: 8, status: 'low_stock', image : '/products/terracotta-vase.png', sales: 145, rating: 4.5 },
+  { id: 7, name: 'Bamboo Serving Tray', category: 'Kitchenware', price: 850, stock: 34, status: 'active', image : '/products/terracotta-vase.png', sales: 98, rating: 4.4 },
+  { id: 8, name: 'Embroidered Wall Hanging', category: 'Home Decor', price: 1500, stock: 0, status: 'inactive', image : '/products/terracotta-vase.png', sales: 76, rating: 4.3 },
+];
 
-  const router = useRouter();
-
-  const handleLogin = () => {
-    // ================= VALIDATION =================
-    if (!email || !password) {
-      setError("Please enter email and password");
-      return;
+// --- INTERNAL COMPONENT TO HANDLE SEARCH PARAMS ---
+function ProductsPageContent() {
+  const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    if (searchParams.get("mode") === "add") {
+      setShowAddModal(true);
     }
+  }, [searchParams]);
 
-    if (!email.includes("@")) {
-      setError("Please enter a valid email address");
-      return;
+  const [products, setProducts] = useState(mockProducts);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(isDark);
+    const handleStorageChange = () => {
+      setDarkMode(localStorage.getItem('darkMode') === 'true');
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+    const matchesStatus = selectedStatus === 'all' || product.status === selectedStatus;
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
+
+  const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))];
+
+  const handleSelectAll = () => {
+    if (selectedProducts.length === filteredProducts.length) {
+      setSelectedProducts([]);
+    } else {
+      setSelectedProducts(filteredProducts.map(p => p.id));
     }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
-    // ================= SUCCESS =================
-    setError("");
-    setLoading(true);
-
-    localStorage.setItem("loggedIn", "true");
-    router.push("/home");
-
-
   };
 
+  const handleSelectProduct = (id: number) => {
+    if (selectedProducts.includes(id)) {
+      setSelectedProducts(selectedProducts.filter(pid => pid !== id));
+    } else {
+      setSelectedProducts([...selectedProducts, id]);
+    }
+  };
+
+  const totalProducts = products.length;
+  const activeProducts = products.filter(p => p.status === 'active').length;
+  const outOfStock = products.filter(p => p.status === 'out_of_stock').length;
+  const lowStock = products.filter(p => p.status === 'low_stock').length;
+
   return (
-    <main
-      className="min-h-screen bg-[#F4F7FD] backdrop-blur-sm
-                 flex items-center justify-center px-4 text-gray-900"
-    >
-      <div
-        className="w-full max-w-xl bg-white/40 backdrop-blur-xl
-                   rounded-2xl border border-white/50
-                   shadow-lg p-12"
-      >
-        {/* ================= HEADER ================= */}
-        <div className="flex items-center justify-between mb-12">
-          <div className="flex items-center gap-3">
-           <div className="relative w-100 h-20 flex items-center justify-center">
-             <NirmatriLogo />
-           </div>
+    <div className={darkMode ? 'dark' : ''}>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <main className="p-8">
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">Products</h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your handmade product catalog</p>
+              </div>
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200"
+              >
+                <span className="text-lg">+</span> Add New Product
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <StatCard label="Total Products" value={totalProducts} icon={Package} color="blue" />
+              <StatCard label="Active" value={activeProducts} icon={CheckCircle} color="green" />
+              <StatCard label="Low Stock" value={lowStock} icon={AlertTriangle} color="yellow" />
+              <StatCard label="Out of Stock" value={outOfStock} icon={XCircle} color="red" />
+            </div>
           </div>
-        </div>
 
-        <h1 className="text-3xl font-semibold text-gray-900 mb-10">
-          Login
-        </h1>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+              </div>
 
-        {/* ================= EMAIL ================= */}
-        <div className="mb-8">
-          <label className="block text-sm text-gray-600 mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@email.com"
-            className="w-full rounded-xl border border-gray-300/60
-                      bg-white/60 px-4 py-4 text-sm
-                      focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat === 'all' ? 'All Categories' : cat}</option>
+                ))}
+              </select>
 
-        {/* ================= PASSWORD ================= */}
-        <div className="mb-4">
-          <label className="block text-sm text-gray-600 mb-2">
-            Password
-          </label>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="low_stock">Low Stock</option>
+                <option value="out_of_stock">Out of Stock</option>
+                <option value="inactive">Inactive</option>
+              </select>
 
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              className="w-full rounded-xl border border-gray-300/60
-                        bg-white/60 px-4 py-4 pr-12 text-sm
-                        focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+              <div className="flex gap-2 border border-gray-300 dark:border-gray-600 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`px-4 py-2 rounded transition-colors ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                >
+                  <Grid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-4 py-2 rounded transition-colors ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
 
-            {/* 👁 Eye Toggle */}
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2
-                        text-gray-500 hover:text-gray-800 transition"
-            >
-              {showPassword ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </button>
+            {selectedProducts.length > 0 && (
+              <div className="mt-4 flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <span className="text-blue-900 dark:text-blue-300 font-medium">
+                  {selectedProducts.length} product{selectedProducts.length > 1 ? 's' : ''} selected
+                </span>
+                <div className="flex gap-2">
+                  <button className="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Edit Prices</button>
+                  <button className="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Update Stock</button>
+                  <button className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
 
-        {/* ================= ERROR ================= */}
-        {error && (
-          <p className="text-sm text-red-600 mb-6">
-            {error}
-          </p>
-        )}
+          {viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} isSelected={selectedProducts.includes(product.id)} onSelect={() => handleSelectProduct(product.id)} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
+                  <tr>
+                    <th className="px-6 py-4 text-left">
+                      <input type="checkbox" checked={selectedProducts.length === filteredProducts.length && filteredProducts.length > 0} onChange={handleSelectAll} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Product</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Category</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Price</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Stock</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Sales</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Status</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {filteredProducts.map((product) => (
+                    <ProductRow key={product.id} product={product} isSelected={selectedProducts.includes(product.id)} onSelect={() => handleSelectProduct(product.id)} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-        {/* ================= FORGOT ================= */}
-        <div className="text-right mb-10">
-          <Link
-            href="/userauth/forgot-password"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            Forgot password?
-          </Link>
-        </div>
-
-        {/* ================= LOGIN BUTTON ================= */}
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className="w-full rounded-xl bg-blue-600 py-4
-                     text-white text-sm font-medium
-                     hover:bg-blue-700 transition
-                     flex items-center justify-center gap-2
-                     disabled:opacity-70"
-        >
-          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-          {loading ? "Logging in..." : "Login"}
-        </button>
-
-        {/* ================= GOOGLE ================= */}
-        <button
-          className="mt-6 w-full flex items-center justify-center gap-3
-                     rounded-xl border border-gray-300/60
-                     bg-white/70 py-4 text-sm font-medium
-                     text-gray-700 hover:bg-white transition"
-        >
-          <img src="/google.jpg" className="h-5 w-5" alt="Google"/>
-          Continue with Google
-        </button>
-
-        {/* ================= REGISTER ================= */}
-        <p className="mt-10 text-sm text-gray-700 text-center">
-          Do not have an account?{" "}
-          <Link
-            href="/userauth/signup"
-            className="text-blue-600 hover:underline"
-          >
-            Register
-          </Link>
-        </p>
+          {filteredProducts.length === 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+              <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No products found</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                {searchQuery || selectedCategory !== 'all' || selectedStatus !== 'all' ? 'Try adjusting your filters' : 'Start by adding your first product'}
+              </p>
+              <button onClick={() => setShowAddModal(true)} className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Add Product</button>
+            </div>
+          )}
+        </main>
+        {showAddModal && <AddProductModal onClose={() => setShowAddModal(false)} />}
       </div>
-    </main>
+    </div>
   );
-} // code updated
+}
+
+// --- MAIN EXPORTED PAGE (THE FIX) ---
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProductsPageContent />
+    </Suspense>
+  );
+}
+
+// --- HELPER COMPONENTS (IDENTICAL TO ORIGINAL) ---
+
+function StatCard({ label, value, icon : Icon, color }: { label: string; value: number; icon: React.ElementType; color: string; }) {
+  const colorClasses = {
+    blue: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300',
+    green: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300',
+    yellow: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-300',
+    red: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300',
+  };
+  return (
+    <div className={`${colorClasses[color as keyof typeof colorClasses]} border rounded-lg p-4`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium opacity-80">{label}</p>
+          <p className="text-2xl font-bold mt-1">{value}</p>
+        </div>
+        <Icon className="w-7 h-7 opacity-80" />
+      </div>
+    </div>
+  );
+}
+
+function ProductCard({ product, isSelected, onSelect }: any) {
+  const statusConfig = {
+    active: { label: 'Active', class: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' },
+    low_stock: { label: 'Low Stock', class: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' },
+    out_of_stock: { label: 'Out of Stock', class: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' },
+    inactive: { label: 'Inactive', class: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' },
+  };
+  const status = statusConfig[product.status as keyof typeof statusConfig];
+  return (
+    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border-2 transition-all duration-200 overflow-hidden hover:shadow-md ${isSelected ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900' : 'border-gray-200 dark:border-gray-700'}`}>
+      <div className="relative bg-gray-100 dark:bg-gray-900/50 h-48 flex items-center justify-center">
+        <Image src={product.image} alt={product.name} fill className="object-contain p-4" />
+        <div className="absolute top-3 left-3">
+          <input type="checkbox" checked={isSelected} onChange={onSelect} className="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+        </div>
+        <div className="absolute top-3 right-3">
+          <span className={`px-3 py-1 text-xs font-semibold rounded-full ${status.class}`}>{status.label}</span>
+        </div>
+      </div>
+      <div className="p-4">
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-1 truncate">{product.name}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{product.category}</p>
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xl font-bold text-gray-900 dark:text-white">₹{product.price.toLocaleString()}</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">Stock: {product.stock}</span>
+        </div>
+        <div className="flex items-center gap-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
+          <span>⭐ {product.rating}</span><span>•</span><span>{product.sales} sold</span>
+        </div>
+        <div className="flex gap-2">
+          <button className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"><Pencil className="w-4 h-4" /></button>
+          <button className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"><Eye className="w-4 h-4" /></button>
+          <button className="px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"><Trash2 className="w-4 h-4" /></button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductRow({ product, isSelected, onSelect }: any) {
+  const statusConfig = {
+    active: { label: 'Active', class: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' },
+    low_stock: { label: 'Low Stock', class: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' },
+    out_of_stock: { label: 'Out of Stock', class: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' },
+    inactive: { label: 'Inactive', class: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' },
+  };
+  const status = statusConfig[product.status as keyof typeof statusConfig];
+  return (
+    <tr className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
+      <td className="px-6 py-4">
+        <input type="checkbox" checked={isSelected} onChange={onSelect} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+      </td>
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-3"><span className="text-3xl">{product.image}</span><div><p className="font-medium text-gray-900 dark:text-white">{product.name}</p><p className="text-sm text-gray-500 dark:text-gray-400">⭐ {product.rating}</p></div></div>
+      </td>
+      <td className="px-6 py-4 text-gray-900 dark:text-gray-300">{product.category}</td>
+      <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">₹{product.price.toLocaleString()}</td>
+      <td className="px-6 py-4 text-gray-900 dark:text-gray-300">{product.stock}</td>
+      <td className="px-6 py-4 text-gray-900 dark:text-gray-300">{product.sales}</td>
+      <td className="px-6 py-4"><span className={`px-3 py-1 text-xs font-semibold rounded-full ${status.class}`}>{status.label}</span></td>
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-2">
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"><Pencil className="w-4 h-4" /></button>
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"><Eye className="w-4 h-4" /></button>
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"><Trash2 className="w-4 h-4" /></button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+function AddProductModal({ onClose }: { onClose: () => void }) {
+  const [formData, setFormData] = useState({ name: '', category: 'Home Decor', price: '', stock: '', description: '' });
+  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onClose(); };
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border dark:border-gray-700">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Add New Product</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl">×</button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Product Name *</label>
+              <input type="text" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., Handmade Terracotta Vase" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category *</label>
+                <select required value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500"><option>Home Decor</option><option>Kitchenware</option><option>Storage</option><option>Textiles</option><option>Accessories</option></select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Price (₹) *</label>
+                <input type="number" required value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stock Quantity *</label>
+              <input type="number" required value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} className="w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+              <textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} rows={4} className="w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Product Images</label>
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer dark:bg-gray-900/30"><div className="text-4xl mb-2">📸</div><p className="text-gray-600 dark:text-gray-400 mb-1">Click to upload or drag and drop</p><p className="text-sm text-gray-500 dark:text-gray-500">PNG, JPG up to 5MB</p></div>
+            </div>
+          </div>
+          <div className="flex gap-3 mt-8">
+            <button onClick={onClose} className="flex-1 px-6 py-3 border dark:border-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 font-medium">Cancel</button>
+            <button type="submit" className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Add Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
