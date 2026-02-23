@@ -1,5 +1,4 @@
 "use client";
-
 import clsx from "clsx";
 import type { Section } from "@/app/components/HeaderWrapper";
 

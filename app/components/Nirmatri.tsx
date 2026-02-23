@@ -1,13 +1,26 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function NirmatriLogo() {
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-transparent">
-      <div className="relative w-[220px] h-[220px] flex items-center justify-center">
+  const router = useRouter();
+  const pathname = usePathname();
 
-        {/* 🔴 Bottom Logo – Glow / Effect */}
+  const handleClick = () => {
+    if (pathname === "/") {
+      router.replace("/superadmin/login");
+    }
+  };
+
+  return (
+    <div
+      onClick={pathname === "/" ? handleClick : undefined}
+      className="flex items-center justify-center"
+    >
+      <div className="relative w-[220px] h-[220px] flex items-center justify-center cursor-pointer">
+        
+        {/* Glow Logo */}
         <Image
           src="/logo.svg"
           alt="Nirmatri Logo Glow"
@@ -15,6 +28,7 @@ export default function NirmatriLogo() {
           height={200}
           className="
             absolute
+            pointer-events-none
             brightness-100
             saturate-100
             sepia
@@ -27,7 +41,7 @@ export default function NirmatriLogo() {
           "
         />
 
-        {/* 🔴 Top Logo – Main Sharp Logo */}
+        {/* Main Logo */}
         <Image
           src="/logo.svg"
           alt="Nirmatri Logo"
@@ -36,7 +50,6 @@ export default function NirmatriLogo() {
           className="relative z-10"
           priority
         />
-
       </div>
     </div>
   );
