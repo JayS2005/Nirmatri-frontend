@@ -13,7 +13,7 @@ export default function PendingApprovalPage() {
 
   const handleLogout = () => {
     // clear auth/session here
-    router.push("/seller/login");
+    router.push("/");
   };
 
   const checkStatus = () => {
@@ -68,10 +68,10 @@ export default function PendingApprovalPage() {
 
           <button
             onClick={handleLogout}
-            className="flex items-center justify-center gap-2 w-full rounded-lg bg-blue-600 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+            className="flex items-center justify-center gap-2 w-full rounded-lg bg-green-900 py-2.5 text-sm font-medium text-white hover:bg-green-700"
           >
             <LogOut size={16} />
-            Logout
+            Go Home
           </button>
         </div>
 

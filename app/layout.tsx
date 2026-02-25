@@ -15,14 +15,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">
+     <body
+  className="
+   min-h-screen
+bg-gradient-to-br from-[#F0FFF4] via-[#C6F6D5] to-[#9AE6B4] text-[#22543D]
+  "
+>
         {/*  THEME PROVIDER (ROOT) */}
         <ThemeProvider>
           {/*  HEADER + SIDEBAR CONTROLLER */}
           <HeaderWrapper />
 
           {/*  PAGE CONTENT */}
-          {children}
+         <main className="min-h-screen">
+  {children}
+</main>
         </ThemeProvider>
       </body>
     </html>

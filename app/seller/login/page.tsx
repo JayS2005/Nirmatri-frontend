@@ -14,7 +14,7 @@ export default function SellerLoginPage() {
 const [loading, setLoading] = useState(false);
 
   return (
-    <main className="min-h-screen flex bg-[#F5F7FF] overflow-hidden">
+    <main className="min-h-screen flex bg-transparent overflow-hidden">
 
       {/* LEFT – LOGIN FORM */}
       <div className="w-full lg:w-[45%] flex items-center justify-center px-8">
@@ -77,7 +77,7 @@ const [loading, setLoading] = useState(false);
           <div className="text-right mb-6">
             <Link
               href="/forgot-password"
-              className="text-sm text-blue-600 hover:underline"
+              className="text-sm text-black-600 hover:underline"
             >
               Forgot Password?
             </Link>
@@ -103,8 +103,8 @@ const [loading, setLoading] = useState(false);
     flex items-center justify-center gap-2
     transition-all duration-300
     ${loading
-      ? "bg-blue-400 cursor-not-allowed"
-      : "bg-blue-600 hover:bg-blue-700 hover:shadow-lg"}
+      ? "bg-[#0F5132] cursor-not-allowed"
+      : "bg-[#0F5132] hover:bg-[#1B7D47] hover:shadow-lg"}
   `}
 >
   {loading ? (
@@ -134,7 +134,7 @@ const [loading, setLoading] = useState(false);
             Don&apos;t have an Account?{" "}
             <Link
               href="/seller/register"
-              className="text-blue-600 font-medium hover:underline"
+              className="text-black-600 font-medium hover:underline"
             >
               Register Now
             </Link>

@@ -116,12 +116,10 @@ export default function SellerRegisterPage() {
           <div className="w-full max-w-lg rounded-2xl bg-white/40 backdrop-blur-xl border border-white/40 p-10 shadow-[0_30px_80px_rgba(0,0,0,0.18)]">
 
             <div className="flex items-center gap-2 mb-8">
-              <div className="h-9 w-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
-                N
+              <div className="">
+                {/* N */}
               </div>
-              <span className="text-sm font-semibold text-gray-800">
-                Nirmatri Seller
-              </span>
+              
             </div>
 
             <h1 className="text-2xl font-semibold text-gray-900 mb-1">
@@ -169,12 +167,12 @@ export default function SellerRegisterPage() {
                   <button
                     type="button"
                     onClick={() => setShowTerms(true)}
-                    className="text-blue-600 hover:underline font-medium"
+                    className="text-green-900 hover:underline font-medium"
                   >
                     Terms & Conditions
                   </button>{" "}
                   and{" "}
-                  <Link href="/seller/privacy-policy" target="_blank" className="text-blue-600 hover:underline font-medium">
+                  <Link href="/seller/privacy-policy" target="_blank" className="text-green-900 hover:underline font-medium">
                     Privacy Policy
                   </Link>
                 </label>
@@ -187,8 +185,8 @@ export default function SellerRegisterPage() {
                 disabled={loading || !agreeTerms}
                 className={`w-full rounded-lg py-3 text-white font-medium transition-all ${
                   loading || !agreeTerms
-                    ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 hover:shadow-lg"
+                    ? "bg-[#75975e] cursor-not-allowed"
+                    : "bg-green-900 hover:bg-[#8bca84] hover:shadow-lg"
                 }`}
               >
                 {loading ? "Creating account..." : "Create Seller Account"}
@@ -197,7 +195,7 @@ export default function SellerRegisterPage() {
 
             <p className="mt-6 text-sm text-gray-600 text-center">
               Already have an account?{" "}
-              <Link href="/seller/login" className="text-blue-600 font-medium hover:underline">
+              <Link href="/seller/login" className="text-green-900 font-medium hover:underline">
                 Login
               </Link>
             </p>

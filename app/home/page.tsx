@@ -11,7 +11,7 @@ import { ThemeProvider } from "@/app/contexts/ThemeContext";
 export default function Page() {
   return (
     
-      <div className="min-h-screen bg-black transition-colors duration-300">
+      <div className="min-h-screen bg-transparent transition-colors duration-300">
         <VideoLikeCarousel />
         <CategoryShowcase />
         <SponsoredProducts />

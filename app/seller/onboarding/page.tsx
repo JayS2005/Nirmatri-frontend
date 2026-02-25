@@ -104,7 +104,7 @@ export default function SellerOnboardingPage() {
   // RENDER
   // ============================================
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4 py-8 transition-colors duration-200">
+    <main className="min-h-screen bg-transparent flex items-center justify-center px-4 py-8 transition-colors duration-200">
       <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8 transition-colors duration-200">
         {/* ============================================ */}
         {/* 🔹 STEPPER HEADER */}
@@ -230,7 +230,7 @@ export default function SellerOnboardingPage() {
 
             <button
               onClick={nextStep}
-              className="px-8 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+              className="px-8 py-2.5 rounded-lg bg-green-900 hover:bg-[#98fbcb] text-white hover:text-black font-medium transition-all duration-200 shadow-md hover:shadow-lg"
             >
               {currentStep === steps.length - 1 ? "Submit & Finish" : "Continue →"}
             </button>
@@ -500,7 +500,7 @@ function KYC({ formData, updateFormData }: FormDataProps) {
 
       {/* Info Box */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <p className="text-sm text-blue-900 dark:text-blue-400">
+        <p className="text-sm text-green-900 dark:text-blue-400">
           <strong><NotebookText className="inline mr-2" size={16} /> Note:</strong> All documents information must be clear.
         </p>
       </div>
@@ -597,7 +597,7 @@ function Bank({ formData, updateFormData }: FormDataProps) {
 
       {/* Warning Box */}
       <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-        <p className="text-sm text-yellow-900 dark:text-yellow-400">
+        <p className="text-sm text-red-900 dark:text-red-400">
           <strong><AlertTriangle className="inline mr-2" size={16} /> Important:</strong> Ensure bank details are accurate. All payments will be transferred to this account.
         </p>
       </div>
@@ -672,7 +672,7 @@ function PhoneVerification({ formData, updateFormData }: FormDataProps) {
           <button
             onClick={handleSendOtp}
             disabled={formData.phoneNumber.length !== 10 || timer > 0 || formData.isOtpVerified}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="px-6 py-3 bg-green-900 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {formData.isOtpVerified ? "Verified ✓" : timer > 0 ? `${timer}s` : "Send OTP"}
           </button>
@@ -741,7 +741,7 @@ function PhoneVerification({ formData, updateFormData }: FormDataProps) {
 
       {/* Info Box */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <p className="text-sm text-blue-900 dark:text-blue-400">
+        <p className="text-sm text-green-900 dark:text-blue-400">
           <strong><Smartphone className="inline mr-2" size={16} /> Why verify?</strong> We need to confirm your identity and send order updates via SMS.
         </p>
       </div>
@@ -838,11 +838,11 @@ function Review({ formData }: any) {
       
       {/* Info Box */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-5">
-        <p className="text-sm text-blue-900 dark:text-blue-400 font-semibold mb-2">
+        <p className="text-sm text-green-900 dark:text-blue-400 font-semibold mb-2">
           <Clipboard className="inline mr-2" size={16} />
           What happens next?
         </p>
-        <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1 list-disc list-inside">
+        <ul className="text-sm text-green-900 dark:text-blue-300 space-y-1 list-disc list-inside">
           <li>Your application will be reviewed within 24-48 hours</li>
           <li>You will receive an email confirmation once approved</li>
           <li>You can then start adding products and receiving orders</li>
